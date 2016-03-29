@@ -1,0 +1,10 @@
+cluster.name: es17319
+network.host: _eth1_
+index.number_of_shards: 2
+index.number_of_replicas: 1
+bootstrap.mlockall: true
+discovery.zen.minimum_master_nodes: 1
+discovery.zen.ping.unicast.hosts: [ 10.20.30.11, 10.20.30.12 ]
+threadpool.bulk.queue_size: 100
+index.merge.scheduler.max_thread_count: 1
+index.translog.flush_threshold_size: 100mb
