@@ -1,0 +1,15 @@
+{
+  "guid": "e4eb5672-86d4-4e56-98ea-0ab727c94585",
+  "email": "zGreene@Innojam.com",
+  "created": "2016-03-22T11:00:01.978774873+01:00",
+  "updated": "2016-03-22T11:00:01.978774873+01:00",
+  "deleted": null,
+  "additionalData": {
+    "traits": {
+      "firstName": "Mary",
+      "firstName_reverse": "yraM",
+      "lastName": "Lawson",
+      "lastName_reverse": "noswaL"
+    }
+  }
+}

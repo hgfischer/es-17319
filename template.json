@@ -1,0 +1,228 @@
+{
+  "template": "customer-data-*",
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1,
+    "index.refresh_interval": "1s",
+    "index.translog.flush_threshold_size": "128mb",
+    "index.mapping.ignore_malformed": true,
+    "index": {
+      "store": {
+        "compress": {
+          "stored": true,
+          "tv": true
+        }
+      }
+    },
+    "analysis": {
+      "analyzer": {
+        "lowercase_keyword": {
+          "tokenizer": "keyword",
+          "filter": "lowercase"
+        },
+        "substring_lowercase" : {
+          "tokenizer" : "keyword",
+          "filter" : ["lowercase", "substring"]
+        },
+        "substring_keyword" : {
+          "tokenizer" : "keyword",
+          "filter" : "substring"
+        }
+      },
+      "filter" : {
+        "substring" : {
+          "type" : "nGram",
+          "min_gram" : 1,
+          "max_gram"  : 20
+        }
+      }
+    }
+  },
+  "mappings": {
+    "customer": {
+      "_source": {
+        "enabled": true
+      },
+      "_all": {
+        "enabled": false
+      },
+      "date_detection": false,
+      "properties": {
+        "guid": {
+          "type": "string",
+          "index": "no",
+          "include_in_all": false
+        },
+        "email": {
+          "type": "string",
+          "index": "no",
+          "include_in_all": false
+        },
+        "created": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+          "include_in_all": false,
+          "norms": {
+            "loading": "eager"
+          }
+        },
+        "updated": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+          "include_in_all": false,
+          "norms": {
+            "loading": "eager"
+          }
+        },
+        "deleted": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+          "include_in_all": false,
+          "norms": {
+            "loading": "eager"
+          }
+        },
+        "additionalData": {
+          "type": "nested",
+          "include_in_parent": true,
+          "include_in_root": true,
+          "include_in_all": false,
+          "properties": {}
+        }
+      },
+      "dynamic_templates": [
+        {
+          "string_search_template": {
+            "path_match": "additionalData.*",
+            "match": "*_string",
+            "mapping": {
+              "type": "string",
+              "term_vector": "with_positions_offsets",
+              "include_in_all": false,
+              "index": "not_analyzed",
+              "fields": {
+                "contains": {
+                  "type": "string",
+                  "analyzer": "substring_keyword",
+                  "search_analyzer": "keyword",
+                  "term_vector": "with_positions_offsets",
+                  "include_in_all": false,
+                  "norms": {
+                    "loading": "eager"
+                  }
+                },
+                "lowercase": {
+                  "type": "string",
+                  "analyzer": "lowercase_keyword",
+                  "term_vector": "with_positions_offsets",
+                  "include_in_all": false,
+                  "norms": {
+                    "loading": "eager"
+                  }
+                },
+                "lowercase_contains": {
+                  "type": "string",
+                  "search_analyzer": "lowercase_keyword",
+                  "analyzer": "substring_lowercase",
+                  "term_vector": "with_positions_offsets",
+                  "include_in_all": false,
+                  "norms": {
+                    "loading": "eager"
+                  }
+                }
+              }
+            },
+            "match_mapping_type": "string"
+          }
+        },
+        {
+          "string_reverse_template": {
+            "path_match": "additionalData.*",
+            "match": "*_reverse",
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed",
+              "term_vector": "with_positions_offsets",
+              "include_in_all": false,
+              "norms": {
+                "loading": "eager"
+              },
+              "fields": {
+                "lowercase": {
+                  "type": "string",
+                  "analyzer": "lowercase_keyword",
+                  "term_vector": "with_positions_offsets",
+                  "include_in_all": false,
+                  "norms": {
+                    "loading": "eager"
+                  }
+                }
+              }
+            },
+            "match_mapping_type": "string"
+          }
+        },
+        {
+          "float_template": {
+            "path_match": "additionalData.*",
+            "match": "*_float",
+            "mapping": {
+              "type": "float",
+              "term_vector": "with_positions_offsets",
+              "include_in_all": false,
+              "norms": {
+                "loading": "eager"
+              }
+            },
+            "match_mapping_type": "string"
+          }
+        },
+        {
+          "integer_template": {
+            "path_match": "additionalData.*",
+            "match": "*_int",
+            "mapping": {
+              "type": "integer",
+              "term_vector": "with_positions_offsets",
+              "include_in_all": false,
+              "norms": {
+                "loading": "eager"
+              }
+            },
+            "match_mapping_type": "string"
+          }
+        },
+        {
+          "date_template": {
+            "path_match": "additionalData.*",
+            "match": "*_date",
+            "mapping": {
+              "type": "date",
+              "term_vector": "with_positions_offsets",
+              "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis",
+              "include_in_all": false,
+              "norms": {
+                "loading": "eager"
+              }
+            },
+            "match_mapping_type": "string"
+          }
+        },
+        {
+          "string_template": {
+            "mapping": {
+              "type": "string",
+              "index": "not_analyzed",
+              "term_vector": "with_positions_offsets",
+              "include_in_all": false,
+              "norms": {
+                "loading": "eager"
+              }
+            },
+            "match_mapping_type": "string"
+          }
+        }
+      ]
+    }
+  }
+}
